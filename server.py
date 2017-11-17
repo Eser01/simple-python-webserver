@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import sys, os, BaseHTTPServer
+import os, BaseHTTPServer
 from SimpleHTTPServer import SimpleHTTPRequestHandler
 import config
 
