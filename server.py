@@ -6,8 +6,10 @@ import config
 
 # Change directory to serve:
 BASEPATH = os.getcwd()
-web_dir = os.path.join(BASEPATH, config.DIRECTORY)
-os.chdir(web_dir)
+if os.path.isabs(config.DIRECTORY):
+	os.chdir(config.DIRECTORY)
+else:
+	os.chdir(os.path.join(BASEPATH, config.DIRECTORY))
 
 if config.SSL:
 	# SSL version taken from <https://gist.github.com/dergachev/7028596>
@@ -18,7 +20,11 @@ if config.SSL:
 	handler = SimpleHTTPRequestHandler
 	handler.protocol_version = config.HTTP_PROTOCOL
 	httpd = BaseHTTPServer.HTTPServer((config.SSL_HOST, config.SSL_PORT), handler)
-	httpd.socket = ssl.wrap_socket(httpd.socket, certfile=os.path.join(BASEPATH, config.SSL_CERTFILE), server_side=True)
+
+	if os.path.isabs(config.SSL_CERTFILE):
+		httpd.socket = ssl.wrap_socket(httpd.socket, certfile=config.SSL_CERTFILE, server_side=True)
+	else:
+		httpd.socket = ssl.wrap_socket(httpd.socket, certfile=os.path.join(BASEPATH, config.SSL_CERTFILE), server_side=True)
 else:
 	handler = SimpleHTTPRequestHandler
 	handler.protocol_version = config.HTTP_PROTOCOL
